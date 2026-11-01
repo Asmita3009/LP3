@@ -1,0 +1,52 @@
+def fractional_knapsack(items, capacity):
+    items.sort(key=lambda x: x[1] / x[2], reverse=True)
+
+    total_profit = 0
+    selected_items = []
+
+    for item_id, profit, weight in items:
+        if capacity == 0:
+            break
+
+        if weight <= capacity:
+            fraction = 1
+            total_profit += profit
+            capacity -= weight
+        else:
+            fraction = capacity / weight
+            total_profit += profit * fraction
+            capacity = 0
+
+        selected_items.append((item_id, fraction))         
+
+    return total_profit, selected_items
+
+
+n = int(input("Enter the number of items: "))
+items = []
+
+for i in range(n):
+    profit = float(input(f"Enter profit of item {i + 1}: "))
+    weight = float(input(f"Enter weight of item {i + 1}: "))
+    items.append((i + 1, profit, weight))
+
+capacity = float(input("Enter knapsack capacity: "))
+
+if n <= 0 or capacity < 0 or any(
+    weight <= 0 or profit < 0 for _, profit, weight in items
+):
+    print("Invalid input.")
+else:
+    max_profit, selected_items = fractional_knapsack(items, capacity)
+
+    print("\nSelected Items:")
+    for item_id, fraction in selected_items:
+        print(f"Item {item_id}: {fraction * 100:.2f}%")
+
+    print(f"\nMaximum Profit: {max_profit:.2f}")
+
+##Ratio: Calculate profit / weight.
+Sorting: Sort in descending order using reverse=True.
+Selection: Select the complete item if it fits.
+Fraction: Otherwise, select capacity / weight of the item.
+Complexity: Time = O(n log n); Space = O(n).

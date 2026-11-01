@@ -1,0 +1,114 @@
+from collections import Counter
+class Node:
+    def __init__(self,char=None,freq=0):
+        self.char=char
+        self.freq=freq
+        self.left=None
+        self.right=None
+def build_huffman_tree(text):
+    if not text:
+        return None
+    frequency=Counter(text)
+    nodes=[Node(char,freq) for char,freq in frequency.items()]
+    while len(nodes)>1:
+        nodes.sort(key=lambda node:node.freq)
+        left=nodes.pop(0)
+        right=nodes.pop(0)
+        merged=Node(freq=left.freq+right.freq)
+        merged.left=left
+        merged.right=right
+        nodes.append(merged)
+    return nodes[0]
+def generate_codes(root):
+    codes={}
+    def generate(node,code):
+        if node is None:
+            return
+        if node.char is not None:
+            codes[node.char]=code if code else "0"
+            return
+        generate(node.left,code+"0")
+        generate(node.right,code+"1")
+    generate(root,"")
+    return codes
+def display_codes(codes):
+    print("\nHuffman Codes:")
+    for char,code in sorted(codes.items()):
+        print(repr(char),":",code)
+def encode_text(text,codes):
+    return ''.join(codes[char] for char in text)
+def decode_text(encoded_text,root):
+    if root is None:
+        return ""
+    if root.left is None and root.right is None:
+        return root.char*len(encoded_text)
+    decoded=""
+    current=root
+    for bit in encoded_text:
+        if bit=="0":
+            current=current.left
+        else:
+            current=current.right
+        if current.char is not None:
+            decoded+=current.char
+            current=root
+    return decoded
+def main():
+    root=None
+    codes={}
+    encoded_text=""
+    while True:
+        print("\n--- HUFFMAN ENCODING ---")
+        print("1. Build Huffman Tree")
+        print("2. Encode the Text")
+        print("3. Decode the Text")
+        print("4. Exit")
+        choice=input("Enter your choice: ")
+        if choice=="1":
+            text=input("Enter the text: ")
+            if not text:
+                print("Text cannot be empty.")
+                continue
+            root=build_huffman_tree(text)
+            codes=generate_codes(root)
+            print("Huffman Tree built successfully!")
+            display_codes(codes)
+        elif choice=="2":
+            if root is None:
+                print("Please build the Huffman Tree first.")
+                continue
+            text=input("Enter the text to encode: ")
+            try:
+                encoded_text=encode_text(text,codes)
+                print("Encoded Text:",encoded_text)
+            except KeyError:
+                print("Error: Character not present in the Huffman Tree.")
+        elif choice=="3":
+            if root is None:
+                print("Please build the Huffman Tree first.")
+                continue
+            if not encoded_text:
+                encoded_text=input("Enter the encoded binary text: ")
+            print("Decoded Text:",decode_text(encoded_text,root))
+        elif choice=="4":
+            print("Program terminated.")
+            break
+        else:
+            print("Invalid choice.")
+if __name__=="__main__":
+    main()
+
+##Operation	Time Complexity
+Calculate frequencies	O(m)
+Create initial nodes	O(n)
+Build Huffman tree	O(n² log n)
+Generate Huffman codes	O(n)
+Encode text	O(m)
+Decode text	O(m)
+
+
+Why is tree construction O(n² log n)?
+
+The program sorts the list during every iteration. Sorting takes O(k log k) time when there are k nodes, and there are n - 1 merging iterations. The total upper bound is O(n² log n).
+
+Space complexity: O(m + n) overall, including the input, frequency dictionary, Huffman tree, code dictionary, and encoded or decoded output. The tree itself requires O(n) space.

@@ -1,0 +1,60 @@
+# Gradient Descent Algorithm
+
+# Function
+def function(x):
+    return (x + 3) ** 2
+
+# Derivative of function
+def derivative(x):
+    return 2 * (x + 3)
+
+# Initial value
+x = 2
+
+# Learning rate
+learning_rate = 0.1
+
+# Number of iterations
+iterations = 50
+
+print("Gradient Descent")
+print("----------------------------")
+x_history = [x]
+y_history = [function(x)]
+
+for i in range(iterations):
+
+    gradient = derivative(x)
+
+    # Update x
+    x = x - learning_rate * gradient
+    x_history.append(x)
+    y_history.append(function(x))
+    print("Iteration", i + 1,
+          "x =", round(x, 6),
+          "y =", round(function(x), 6))
+
+print("\nLocal Minimum:")
+print("x =", round(x, 6))
+print("y =", round(function(x), 6))
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+x_values = np.linspace(-6, 4, 100)
+y_values = (x_values + 3) ** 2
+
+plt.plot(x_values, y_values, label="y = (x + 3)^2")
+
+plt.scatter(x_history, y_history,
+            color="red", label="Gradient Descent Steps")
+
+plt.scatter(-3, 0, color="green",
+            marker="*", s=150, label="Minimum Point")
+
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Gradient Descent - Function Graph")
+plt.legend()
+plt.grid()
+plt.show()

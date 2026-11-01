@@ -1,0 +1,96 @@
+# BANK CUSTOMER CHURN PREDICTION USING ANN
+
+# 1. Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# 2. Load Dataset
+df = pd.read_csv("Churn_Modelling.csv")
+
+print("First 5 Records:")
+print(df.head())
+
+print("\nDataset Shape:", df.shape)
+print("\nDataset Information:")
+print(df.info())
+
+# 3. Data Preprocessing
+# Remove unnecessary columns
+df = df.drop(["RowNumber", "CustomerId", "Surname"], axis=1)
+
+# Separate input and output
+X = df.drop("Exited", axis=1)
+y = df["Exited"]
+
+# Convert categorical columns into numerical columns
+X = pd.get_dummies(X, columns=["Geography", "Gender"], drop_first=True, dtype=int)
+
+# 4. Split Dataset into Training and Testing
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+print("\nTraining Data Shape:", X_train.shape)
+print("Testing Data Shape:", X_test.shape)
+
+# 5. Feature Scaling
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# 6. Build ANN Model
+model = MLPClassifier(
+    hidden_layer_sizes=(16, 8),
+    activation="relu",
+    solver="adam",
+    max_iter=300,
+    random_state=42,
+    early_stopping=True
+)
+
+# 7. Train ANN Model
+model.fit(X_train, y_train)
+
+print("\nANN Model Training Completed!")
+
+# 8. Make Predictions
+y_pred = model.predict(X_test)
+
+# 9. Evaluate Model
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nModel Accuracy:", round(accuracy * 100, 2), "%")
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# 10. Plot Training Loss Graph
+plt.figure(figsize=(8, 5))
+plt.plot(model.loss_curve_)
+plt.title("ANN Training Loss")
+plt.xlabel("Iterations")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.show()
+
+# 11. Predict Churn for One Customer
+sample_customer = X_test[0].reshape(1, -1)
+
+prediction = model.predict(sample_customer)
+
+print("\nCustomer Churn Prediction:")
+
+if prediction[0] == 1:
+    print("The customer is likely to leave the bank.")
+else:
+    print("The customer is likely to stay with the bank.")

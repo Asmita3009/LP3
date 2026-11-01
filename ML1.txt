@@ -1,0 +1,385 @@
+# ============================================
+# UBER FARE PREDICTION
+# Linear Regression vs Random Forest Regression
+# ============================================
+
+# 1. Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+
+
+# ============================================
+# 2. Load Dataset
+# ============================================
+
+df = pd.read_csv("uber.csv")
+
+print("Dataset Shape:", df.shape)
+print(df.head())
+
+
+# ============================================
+# 3. Pre-processing
+# ============================================
+
+# Remove unnecessary columns
+df.drop(
+    columns=['Unnamed: 0', 'key'],
+    errors='ignore',
+    inplace=True
+)
+
+# Remove missing values
+df.dropna(inplace=True)
+
+# Convert datetime column
+df['pickup_datetime'] = pd.to_datetime(
+    df['pickup_datetime']
+)
+
+# Extract date/time features
+df['hour'] = df['pickup_datetime'].dt.hour
+df['day'] = df['pickup_datetime'].dt.day
+df['month'] = df['pickup_datetime'].dt.month
+df['year'] = df['pickup_datetime'].dt.year
+df['day_of_week'] = df['pickup_datetime'].dt.dayofweek
+
+# Remove original datetime column
+df.drop(
+    columns=['pickup_datetime'],
+    inplace=True
+)
+
+# Remove invalid values
+df = df[df['fare_amount'] > 0]
+df = df[df['passenger_count'] > 0]
+
+
+# ============================================
+# 4. Identify Outliers
+# ============================================
+
+Q1 = df['fare_amount'].quantile(0.25)
+Q3 = df['fare_amount'].quantile(0.75)
+
+IQR = Q3 - Q1
+
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+print("\nFare Outlier Limits:")
+print("Lower Bound:", lower_bound)
+print("Upper Bound:", upper_bound)
+
+# Number of outliers
+outliers = df[
+    (df['fare_amount'] < lower_bound) |
+    (df['fare_amount'] > upper_bound)
+]
+
+print("Number of outliers:", len(outliers))
+
+
+# Boxplot before removing outliers
+plt.figure(figsize=(8, 5))
+sns.boxplot(x=df['fare_amount'])
+plt.title("Fare Amount - Before Outlier Removal")
+plt.show()
+
+
+# Remove outliers
+df = df[
+    (df['fare_amount'] >= lower_bound) &
+    (df['fare_amount'] <= upper_bound)
+]
+
+
+# Boxplot after removing outliers
+plt.figure(figsize=(8, 5))
+sns.boxplot(x=df['fare_amount'])
+plt.title("Fare Amount - After Outlier Removal")
+plt.show()
+
+
+# ============================================
+# 5. Calculate Trip Distance
+# ============================================
+
+# Convert latitude and longitude to radians
+lon1 = np.radians(df['pickup_longitude'])
+lat1 = np.radians(df['pickup_latitude'])
+
+lon2 = np.radians(df['dropoff_longitude'])
+lat2 = np.radians(df['dropoff_latitude'])
+
+# Difference in coordinates
+dlon = lon2 - lon1
+dlat = lat2 - lat1
+
+# Haversine formula
+a = (
+    np.sin(dlat / 2) ** 2
+    + np.cos(lat1)
+    * np.cos(lat2)
+    * np.sin(dlon / 2) ** 2
+)
+
+c = 2 * np.arcsin(np.sqrt(a))
+
+# Earth radius in kilometres
+df['distance_km'] = 6371 * c
+
+# Remove zero and unrealistic distances
+df = df[
+    (df['distance_km'] > 0) &
+    (df['distance_km'] < 100)
+]
+
+print("\nDistance calculated successfully.")
+print(df[['distance_km', 'fare_amount']].head())
+
+
+# ============================================
+# 6. Check Correlation
+# ============================================
+
+correlation = df.corr()
+
+print("\nCorrelation Matrix:")
+print(correlation)
+
+plt.figure(figsize=(10, 8))
+
+sns.heatmap(
+    correlation,
+    annot=True,
+    cmap='coolwarm',
+    fmt='.2f'
+)
+
+plt.title("Correlation Matrix")
+plt.show()
+
+
+# ============================================
+# 7. Select Features and Target
+# ============================================
+
+features = [
+    'pickup_longitude',
+    'pickup_latitude',
+    'dropoff_longitude',
+    'dropoff_latitude',
+    'passenger_count',
+    'hour',
+    'day',
+    'month',
+    'year',
+    'day_of_week',
+    'distance_km'
+]
+
+X = df[features]
+y = df['fare_amount']
+
+
+# ============================================
+# 8. Train-Test Split
+# ============================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+print("\nTraining data:", X_train.shape)
+print("Testing data:", X_test.shape)
+
+
+# ============================================
+# 9. Linear Regression
+# ============================================
+
+linear_model = LinearRegression()
+
+linear_model.fit(
+    X_train,
+    y_train
+)
+
+linear_pred = linear_model.predict(X_test)
+
+linear_r2 = r2_score(
+    y_test,
+    linear_pred
+)
+
+linear_rmse = np.sqrt(
+    mean_squared_error(
+        y_test,
+        linear_pred
+    )
+)
+
+linear_mae = mean_absolute_error(
+    y_test,
+    linear_pred
+)
+
+print("\n========== LINEAR REGRESSION ==========")
+print("R2 Score :", linear_r2)
+print("RMSE     :", linear_rmse)
+print("MAE      :", linear_mae)
+
+
+# ============================================
+# 10. Random Forest Regression
+# ============================================
+
+rf_model = RandomForestRegressor(
+    n_estimators=100,
+    random_state=42,
+    n_jobs=-1
+)
+
+rf_model.fit(
+    X_train,
+    y_train
+)
+
+rf_pred = rf_model.predict(X_test)
+
+rf_r2 = r2_score(
+    y_test,
+    rf_pred
+)
+
+rf_rmse = np.sqrt(
+    mean_squared_error(
+        y_test,
+        rf_pred
+    )
+)
+
+rf_mae = mean_absolute_error(
+    y_test,
+    rf_pred
+)
+
+print("\n========== RANDOM FOREST REGRESSION ==========")
+print("R2 Score :", rf_r2)
+print("RMSE     :", rf_rmse)
+print("MAE      :", rf_mae)
+
+
+# ============================================
+# 11. Model Comparison
+# ============================================
+
+results = pd.DataFrame({
+    'Model': [
+        'Linear Regression',
+        'Random Forest Regression'
+    ],
+    'R2 Score': [
+        linear_r2,
+        rf_r2
+    ],
+    'RMSE': [
+        linear_rmse,
+        rf_rmse
+    ],
+    'MAE': [
+        linear_mae,
+        rf_mae
+    ]
+})
+
+print("\n========== MODEL COMPARISON ==========")
+print(results)
+
+
+# ============================================
+# 12. Actual vs Predicted - Linear Regression
+# ============================================
+
+plt.figure(figsize=(8, 6))
+
+plt.scatter(
+    y_test,
+    linear_pred,
+    alpha=0.3
+)
+
+plt.xlabel("Actual Fare")
+plt.ylabel("Predicted Fare")
+plt.title("Linear Regression - Actual vs Predicted")
+
+plt.show()
+
+
+# ============================================
+# 13. Actual vs Predicted - Random Forest
+# ============================================
+
+plt.figure(figsize=(8, 6))
+
+plt.scatter(
+    y_test,
+    rf_pred,
+    alpha=0.3
+)
+
+plt.xlabel("Actual Fare")
+plt.ylabel("Predicted Fare")
+plt.title("Random Forest - Actual vs Predicted")
+
+plt.show()
+
+
+# ============================================
+# 14. Random Forest Feature Importance
+# ============================================
+
+importance = pd.DataFrame({
+    'Feature': features,
+    'Importance': rf_model.feature_importances_
+})
+
+importance = importance.sort_values(
+    by='Importance',
+    ascending=False
+)
+
+print("\n========== FEATURE IMPORTANCE ==========")
+print(importance)
+
+plt.figure(figsize=(10, 6))
+
+sns.barplot(
+    x='Importance',
+    y='Feature',
+    data=importance
+)
+
+plt.title("Random Forest Feature Importance")
+plt.show()
+
+
+# ============================================
+# 15. Best Model
+# ============================================
+
+if rf_r2 > linear_r2:
+    print("\nBest Model: Random Forest Regression")
+else:
+    print("\nBest Model: Linear Regression")

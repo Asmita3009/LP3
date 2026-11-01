@@ -1,0 +1,133 @@
+##n = int(input("Enter the number of terms: "))
+
+a, b = 0, 1
+
+if n <= 0:
+    print("Enter a positive number.")
+else:
+    print("Fibonacci Series:")
+
+    for i in range(n):
+        print(a, end=" ")
+        a, b = b, a + b
+
+    print()
+
+def fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+n = int(input("Enter the number of terms: "))
+
+if n <= 0:
+    print("Enter a positive number.")
+else:
+    print("Fibonacci Series:")
+
+    for i in range(n):
+        print(fibonacci(i), end=" ")
+
+    print()
+
+def tower_of_hanoi(n, source, auxiliary, destination):
+    if n == 1:
+        print("Move disk 1 from", source, "to", destination)
+        return
+
+    tower_of_hanoi(n - 1, source, destination, auxiliary)
+
+    print("Move disk", n, "from", source, "to", destination)
+
+    tower_of_hanoi(n - 1, auxiliary, source, destination)
+
+
+n = int(input("Enter the number of disks: "))
+
+if n <= 0:
+    print("Enter a positive number.")
+else:
+    tower_of_hanoi(n, 'A', 'B', 'C')
+    print("Total moves required:", 2**n - 1)  ##
+
+
+
+
+# Fibonacci and Tower of Hanoi using switch-case
+
+# Non-recursive Fibonacci
+def fibonacci_non_recursive(n):
+    a, b = 0, 1
+    print("Fibonacci Series:", end=" ")
+    for i in range(n):
+        print(a, end=" ")
+        a, b = b, a + b
+    print()
+
+# Recursive Fibonacci
+def fibonacci_recursive(n):
+    if n <= 1:
+        return n
+    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+
+# Recursive Tower of Hanoi
+def tower_of_hanoi(n, source, auxiliary, destination):
+    if n == 1:
+        print(f"Move disk 1 from {source} to {destination}")
+        return
+    tower_of_hanoi(n - 1, source, destination, auxiliary)
+    print(f"Move disk {n} from {source} to {destination}")
+    tower_of_hanoi(n - 1, auxiliary, source, destination)
+
+# Main menu
+while True:
+    print("\n----- MENU -----")
+    print("1. Fibonacci (Non-Recursive)")
+    print("2. Fibonacci (Recursive)")
+    print("3. Tower of Hanoi (Recursive)")
+    print("4. Exit")
+
+    choice = int(input("Enter your choice: "))
+
+    match choice:
+        case 1:
+            n = int(input("Enter the number of terms: "))
+            if n < 0:
+                print("Please enter a non-negative number.")
+            else:
+                fibonacci_non_recursive(n)
+
+        case 2:
+            n = int(input("Enter the number of terms: "))
+            if n < 0:
+                print("Please enter a non-negative number.")
+            else:
+                print("Fibonacci Series:", end=" ")
+                for i in range(n):
+                    print(fibonacci_recursive(i), end=" ")
+                print()
+
+        case 3:
+            n = int(input("Enter the number of disks: "))
+            if n <= 0:
+                print("Number of disks must be positive.")
+            else:
+                print("Tower of Hanoi moves:")
+                tower_of_hanoi(n, 'A', 'B', 'C')
+
+        case 4:
+            print("Exiting program.")
+            break
+
+        case _:
+            print("Invalid choice. Please try again.")
+
+
+##Non-recursive Fibonacci: O(n) time, O(1) auxiliary space.
+Recursive Fibonacci: O(2ⁿ) upper-bound time, O(n) stack space.
+Tower of Hanoi: Minimum moves = \(2^n-1\).
+Tower of Hanoi complexity: O(2ⁿ) time, O(n) stack space.
