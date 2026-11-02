@@ -146,3 +146,95 @@ plt.yticks([0, 1], ["No Diabetes", "Diabetes"])
 plt.legend()
 
 plt.show()\
+
+### KNN Diabetes Prediction: Important Formulas and Concepts
+
+## 1. KNN Algorithm
+- **Type:** Supervised learning
+- **Application:** Binary classification
+- **K = 5:** Considers the five nearest neighbors.
+- **Prediction:** Assigns the majority class among the K nearest neighbors.
+
+## 2. Euclidean Distance
+Used to calculate the distance between two data points.
+
+\[
+\boxed{d(x,y)=\sqrt{\sum_{i=1}^{n}(x_i-y_i)^2}}
+\]
+
+## 3. Standardization (StandardScaler)
+Used to bring features to a comparable scale.
+
+\[
+\boxed{z=\frac{x-\mu}{\sigma}}
+\]
+
+Where \(x\) = feature value, \(\mu\) = mean, and \(\sigma\) = standard deviation.
+
+## 4. Train-Test Split
+- Training data = 80%
+- Testing data = 20%
+
+`random_state=42` ensures reproducibility, while `stratify=y` maintains approximately the same class proportions.
+
+## 5. Confusion Matrix
+
+\[
+\boxed{CM=\begin{bmatrix}TN&FP\\FN&TP\end{bmatrix}}
+\]
+
+| Term | Meaning |
+|---|---|
+| TP | Actual diabetes, predicted diabetes |
+| TN | Actual no diabetes, predicted no diabetes |
+| FP | Actual no diabetes, predicted diabetes |
+| FN | Actual diabetes, predicted no diabetes |
+
+## 6. Evaluation Metrics
+
+**Accuracy:** Overall proportion of correct predictions.
+
+\[
+\boxed{Accuracy=\frac{TP+TN}{TP+TN+FP+FN}}
+\]
+
+**Error Rate:** Proportion of incorrect predictions.
+
+\[
+\boxed{Error\ Rate=1-Accuracy}
+\]
+
+**Precision:** Proportion of predicted diabetic cases that are actually diabetic.
+
+\[
+\boxed{Precision=\frac{TP}{TP+FP}}
+\]
+
+**Recall:** Proportion of actual diabetic cases correctly identified.
+
+\[
+\boxed{Recall=\frac{TP}{TP+FN}}
+\]
+
+**F1-Score:** Harmonic mean of precision and recall.
+
+\[
+\boxed{F1=2\times\frac{Precision\times Recall}{Precision+Recall}}
+\]
+
+## 7. Important Concepts for Viva
+
+| Concept | Short explanation |
+|---|---|
+| Supervised learning | Learns from labeled data. |
+| Binary classification | Predicts one of two classes: 0 or 1. |
+| Lazy learning | Stores training data and performs calculations during prediction. |
+| Feature scaling | Prevents large-scale features from dominating distance calculations. |
+| `fit()` | Trains the classifier. |
+| `predict()` | Predicts outcomes for test data. |
+| Confusion matrix | Summarizes correct and incorrect predictions. |
+| Overfitting | Model performs well on training data but poorly on unseen data. |
+| Underfitting | Model fails to learn important patterns. |
+| `StandardScaler()` | Standardizes features using the training-set mean and standard deviation. |
+
+**Remember for your practical:** KNN uses distance, \(K=5\) determines the number of neighbors, and the confusion matrix provides TP, TN, FP, and FN for calculating the evaluation metrics.
