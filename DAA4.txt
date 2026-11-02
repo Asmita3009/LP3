@@ -99,3 +99,107 @@ Thus, the overall auxiliary space complexity is:
 \boxed{O(nW)}
 \]
 Viva point: The time complexity is called pseudo-polynomial because it depends on the numerical value of the capacity \(W\), not just on the number of bits needed to represent \(W\).
+
+```python
+def knapsack(profits, weights, capacity):
+    n = len(profits)
+
+    items = sorted(
+        [(profits[i], weights[i], i + 1) for i in range(n)],
+        key=lambda x: x[0] / x[1],
+        reverse=True
+    )
+
+    max_profit = 0
+    best_items = []
+
+    def bound(level, profit, weight):
+        if weight > capacity:
+            return 0
+
+        result = profit
+        total_weight = weight
+        i = level
+
+        while i < n and total_weight + items[i][1] <= capacity:
+            result += items[i][0]
+            total_weight += items[i][1]
+            i += 1
+
+        if i < n:
+            result += (capacity - total_weight) * (
+                items[i][0] / items[i][1]
+            )
+
+        return result
+
+    def branch(level, profit, weight, selected):
+        nonlocal max_profit, best_items
+
+        if weight <= capacity and profit > max_profit:
+            max_profit = profit
+            best_items = selected[:]
+
+        if level == n:
+            return
+
+        if bound(level, profit, weight) <= max_profit:
+            return
+
+        p, w, item_no = items[level]
+
+        # Include the current item
+        if weight + w <= capacity:
+            branch(
+                level + 1,
+                profit + p,
+                weight + w,
+                selected + [item_no]
+            )
+
+        # Exclude the current item
+        branch(level + 1, profit, weight, selected)
+
+    branch(0, 0, 0, [])
+
+    best_items.sort()
+    return max_profit, best_items
+
+
+n = int(input("Enter the number of items: "))
+
+if n <= 0:
+    print("Number of items must be positive.")
+else:
+    profits = []
+    weights = []
+
+    for i in range(n):
+        profit = int(input(f"Enter profit of item {i + 1}: "))
+        weight = int(input(f"Enter weight of item {i + 1}: "))
+        profits.append(profit)
+        weights.append(weight)
+
+    capacity = int(input("Enter knapsack capacity: "))
+
+    if capacity < 0 or any(p < 0 for p in profits) or any(
+        w <= 0 for w in weights
+    ):
+        print("Invalid input.")
+    else:
+        max_profit, selected_items = knapsack(
+            profits, weights, capacity
+        )
+
+        print("\nSelected Items:", selected_items)
+        print("Maximum Profit:", max_profit)
+```
+
+##Time and Space Complexity
+- Worst-case time complexity: \(O(2^n)\) nodes may be explored, with additional work for calculating bounds.
+- Auxiliary space complexity: \(O(n)\) for the recursion stack and selected-item lists at a time, excluding sorting and temporary list allocations.
+How This Implements Branch and Bound
+1. Branch: Recursively explores including or excluding each item.
+2. Bound: Estimates the maximum achievable profit using fractional knapsack.
+3. Prune: Stops exploring a branch when its upper bound cannot exceed the current maximum profit.
+4. Result: Returns the maximum profit and the selected item numbers.
