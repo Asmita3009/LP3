@@ -458,3 +458,23 @@ Mean Absolute Error (MAE)
 \boxed{MAE=\frac{1}{n}\sum_{i=1}^{n}|y_i-\hat{y}_i|}
 \]
 Lower RMSE and MAE indicate better predictions.
+Accuracy: Overall proportion of correct predictions.
+\[
+\boxed{Accuracy=\frac{TP+TN}{TP+TN+FP+FN}}
+\]
+Error Rate: Proportion of incorrect predictions.
+\[
+\boxed{Error\ Rate=1-Accuracy}
+\]
+Precision: Proportion of predicted diabetic cases that are actually diabetic.
+\[
+\boxed{Precision=\frac{TP}{TP+FP}}
+\]
+Recall: Proportion of actual diabetic cases correctly identified.
+\[
+\boxed{Recall=\frac{TP}{TP+FN}}
+\]
+F1-Score: Harmonic mean of precision and recall.
+\[
+\boxed{F1=2\times\frac{Precision\times Recall}{Precision+Recall}}
+\]
