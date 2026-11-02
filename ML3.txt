@@ -94,3 +94,104 @@ if prediction[0] == 1:
     print("The customer is likely to leave the bank.")
 else:
     print("The customer is likely to stay with the bank.")
+
+### Bank Customer Churn Prediction Using ANN — Quick Revision
+
+## 1. Important Concepts
+
+| Concept | Meaning |
+|---|---|
+| ANN | Artificial Neural Network inspired by the human brain. |
+| MLPClassifier | Scikit-learn model that implements a Multi-Layer Perceptron. |
+| Supervised Learning | Learns from labeled data. |
+| Binary Classification | Predicts one of two classes: 0 or 1. |
+| One-Hot Encoding | Converts categorical data into numerical columns. |
+| Standardization | Scales features to mean 0 and standard deviation 1. |
+| ReLU | Activation function used in hidden layers. |
+| Adam | Optimizer that updates weights to minimize loss. |
+| Early Stopping | Stops training when validation performance stops improving. |
+| Overfitting | Model performs well on training data but poorly on unseen data. |
+| Confusion Matrix | Summarizes correct and incorrect predictions. |
+
+## 2. Important Formulas
+
+**1. StandardScaler**
+
+\[
+z=\frac{x-\mu}{\sigma}
+\]
+
+Where \(x\) = input, \(\mu\) = mean, and \(\sigma\) = standard deviation.
+
+**2. ReLU Activation Function**
+
+\[
+f(x)=\max(0,x)
+\]
+
+Returns 0 for negative inputs and \(x\) for positive inputs.
+
+**3. Sigmoid Activation Function**
+
+\[
+\sigma(x)=\frac{1}{1+e^{-x}}
+\]
+
+Produces an output between 0 and 1. Your code uses `MLPClassifier`, which uses an internal output configuration for classification rather than explicitly specifying a sigmoid layer.
+
+**4. Accuracy**
+
+\[
+Accuracy=\frac{TP+TN}{TP+TN+FP+FN}\times100
+\]
+
+**5. Precision**
+
+\[
+Precision=\frac{TP}{TP+FP}
+\]
+
+**6. Recall**
+
+\[
+Recall=\frac{TP}{TP+FN}
+\]
+
+**7. F1-Score**
+
+\[
+F1=2\times\frac{Precision\times Recall}{Precision+Recall}
+\]
+
+## 3. Confusion Matrix
+
+| Term | Meaning |
+|---|---|
+| TP | Correctly predicted customers who left |
+| TN | Correctly predicted customers who stayed |
+| FP | Customers who stayed but were predicted to leave |
+| FN | Customers who left but were predicted to stay |
+
+## 4. Important Parameters in Your Code
+
+| Parameter | Purpose |
+|---|---|
+| `hidden_layer_sizes=(16,8)` | Two hidden layers with 16 and 8 neurons |
+| `activation="relu"` | Activation function for hidden layers |
+| `solver="adam"` | Optimization algorithm |
+| `max_iter=300` | Maximum training iterations |
+| `test_size=0.2` | 20% test data, 80% training data |
+| `random_state=42` | Reproducible results |
+| `early_stopping=True` | Stops training when validation performance does not improve sufficiently |
+
+## 5. Remember for Viva
+
+- **Input:** Customer information.
+- **Target:** `Exited`.
+- **0:** Customer stays.
+- **1:** Customer leaves.
+- **Algorithm:** Artificial Neural Network using `MLPClassifier`.
+- **Problem type:** Binary classification.
+- **Scaling:** `StandardScaler`.
+- **Evaluation:** Accuracy, precision, recall, F1-score, and confusion matrix.
+- **Loss graph:** Shows how training loss changes during training.
