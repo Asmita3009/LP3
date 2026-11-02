@@ -75,3 +75,76 @@ elif accuracy_score(y_test, knn_pred) < accuracy_score(y_test, svm_pred):
     print("SVM has higher accuracy on the test dataset.")
 else:
     print("Both models have equal accuracy.")
+
+##1. K-Nearest Neighbors (KNN)
+Concept: Classifies an email based on the majority class among its K nearest neighbors.
+
+Cosine Similarity:
+\[
+\text{Similarity}(A,B)=\frac{A\cdot B}{\|A\|\|B\|}
+\]
+Cosine Distance:
+\[
+D(A,B)=1-\text{Similarity}(A,B)
+\]
+- K = 5: Considers the five nearest emails.
+- Classification: Majority voting determines Spam (1) or Not Spam (0).
+- Algorithm: Brute force calculates distances to training examples.
+2. Support Vector Machine (SVM)
+Concept: Finds a decision boundary that separates spam and legitimate emails while maximizing the margin.
+
+Hyperplane equation:
+\[
+w^T x+b=0
+\]
+Prediction rule:
+\[
+\hat{y}=\operatorname{sign}(w^T x+b)
+\]
+- \(w\) = weight vector
+- \(x\) = input email features
+- \(b\) = bias
+- Support vectors: Training examples closest to the decision boundary.
+- Margin: Distance between the decision boundary and the closest training examples.
+3. Performance Evaluation Formulas
+Remember these four formulas for your viva.
+Metric	Formula	Meaning
+Accuracy	\(\frac{TP+TN}{TP+TN+FP+FN}\times100\)	Overall correctness
+Precision	\(\frac{TP}{TP+FP}\)	Correctness of spam predictions
+Recall	\(\frac{TP}{TP+FN}\)	Actual spam detected
+F1-score	\(\frac{2PR}{P+R}\)	Balance between precision and recall
+
+
+Here, \(P\) = Precision and \(R\) = Recall.
+Confusion Matrix
+	Predicted Not Spam	Predicted Spam
+Actual Not Spam	TN	FP
+Actual Spam	FN	TP
+
+
+- TP: Spam correctly classified as spam.
+- TN: Normal email correctly classified as normal.
+- FP: Normal email incorrectly classified as spam.
+- FN: Spam incorrectly classified as normal.
+4. Important Concepts to Remember
+Concept	Value / Explanation
+Learning type	Supervised learning
+Classification type	Binary classification
+Class 0	Not Spam
+Class 1	Spam
+Training/testing split	80% / 20%
+KNN features	100 selected features
+SVM features	1,000 selected features
+Feature selection	SelectKBest with chi-squared scoring
+KNN parameter	\(K=5\)
+SVM algorithm	Linear SVM (LinearSVC)
+
+
+5. One-Line Differences
+- KNN: Predicts using the nearest training examples.
+- SVM: Predicts using a learned decision boundary.
+- Feature selection: Selects informative features to reduce dimensionality.
+- Overfitting: Performs well on training data but poorly on unseen data.
+- Precision: Important for avoiding legitimate emails being marked as spam.
+- Recall: Important for detecting as many spam emails as possible.
+Most important for the practical exam: Learn the cosine distance formula, SVM hyperplane equation, four evaluation metrics, and the meanings of TP, TN, FP, and FN.
