@@ -383,3 +383,78 @@ if rf_r2 > linear_r2:
     print("\nBest Model: Random Forest Regression")
 else:
     print("\nBest Model: Linear Regression")
+
+##1. Outlier Detection (IQR Method)
+- Q1: First quartile (25th percentile)
+- Q3: Third quartile (75th percentile)
+- IQR:\[
+  IQR = Q3 - Q1
+  \]
+- Lower Bound:\[
+  Q1 - 1.5 \times IQR
+  \]
+- Upper Bound:\[
+  Q3 + 1.5 \times IQR
+  \]
+Values outside these bounds are considered outliers.
+2. Haversine Formula (Trip Distance)
+Used to calculate the straight-line distance between pickup and drop-off coordinates.
+\[
+a=\sin^2\left(\frac{\Delta lat}{2}\right)+\cos(lat_1)\cos(lat_2)\sin^2\left(\frac{\Delta lon}{2}\right)
+\]
+\[
+c=2\arcsin(\sqrt{a})
+\]
+\[
+\boxed{Distance = 6371 \times c}
+\]
+- Latitude and longitude must be converted to radians.
+- 6371 km is the approximate radius of Earth.
+3. Correlation
+Measures the relationship between two variables.
+
+Pearson correlation coefficient:
+\[
+r=\frac{\operatorname{Cov}(X,Y)}{\sigma_X\sigma_Y}
+\]
+- \(r=+1\): Perfect positive correlation
+- \(r=-1\): Perfect negative correlation
+- \(r=0\): No linear correlation
+4. Linear Regression
+Predicts a continuous value using a linear relationship.
+\[
+\boxed{y = b_0+b_1x_1+b_2x_2+\cdots+b_nx_n}
+\]
+Where:
+- \(y\) = predicted fare
+- \(b_0\) = intercept
+- \(b_i\) = model coefficients
+- \(x_i\) = input features
+5. Random Forest Regression
+- Combines predictions from multiple decision trees.
+- Captures nonlinear relationships.
+- Final prediction is the average of individual tree predictions.
+\[
+\boxed{\hat{y}=\frac{1}{N}\sum_{i=1}^{N}\hat{y}_i}
+\]
+Here, \(N\) is the number of trees.
+6. Model Evaluation Metrics
+R² Score
+Measures how well the model explains variation in the target.
+\[
+R^2=1-\frac{\sum(y_i-\hat{y}_i)^2}{\sum(y_i-\bar{y})^2}
+\]
+Higher R² is generally better.
+Mean Squared Error (MSE)
+\[
+MSE=\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2
+\]
+Root Mean Squared Error (RMSE)
+\[
+\boxed{RMSE=\sqrt{MSE}}
+\]
+Mean Absolute Error (MAE)
+\[
+\boxed{MAE=\frac{1}{n}\sum_{i=1}^{n}|y_i-\hat{y}_i|}
+\]
+Lower RMSE and MAE indicate better predictions.
